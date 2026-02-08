@@ -1,21 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
+// DEPRECATED: This file is no longer used.
+// Authentication has been migrated to a custom Express backend with PostgreSQL.
+// Use the auth routes from "server/routes/auth.ts" instead.
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const serviceRole = process.env.SUPABASE_SERVICE_ROLE;
-
-if (!supabaseUrl || !serviceRole) {
-  console.warn(
-    "Supabase server env vars missing: set SUPABASE_URL and SUPABASE_SERVICE_ROLE.",
-  );
-}
-
-export const supabaseAdmin = createClient(
-  supabaseUrl ?? "",
-  serviceRole ?? "",
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  },
-);
+// This file is kept for reference only.
