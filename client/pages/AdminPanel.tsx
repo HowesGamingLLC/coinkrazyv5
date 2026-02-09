@@ -123,6 +123,7 @@ interface MessageStats {
 }
 
 export default function AdminPanel() {
+  const { token } = useAuth();
   const [players, setPlayers] = useState<PlayerAnalytics[]>([]);
   const [filteredPlayers, setFilteredPlayers] = useState<PlayerAnalytics[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -130,6 +131,7 @@ export default function AdminPanel() {
     "all" | "high-risk" | "unverified"
   >("all");
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<any>(null);
   const { jackpots, recentWins } = useJackpot();
 
   // Messaging states
@@ -155,43 +157,68 @@ export default function AdminPanel() {
 
   useEffect(() => {
     loadPlayerData();
+    loadDashboardStats();
     loadMessagingData();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     filterPlayers();
   }, [players, searchTerm, filterStatus]);
 
   const loadPlayerData = async () => {
+    if (!token) return;
     setLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch("/api/admin/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    const users = await getAllUsers();
-    const analytics: PlayerAnalytics[] = users.map((user) => {
-      // Mock additional data for analytics
-      const totalWagered = Math.random() * 1000 + user.totalLosses;
-      const totalWon = totalWagered * (0.85 + Math.random() * 0.1); // 85-95% RTP
-      const netLoss = totalWagered - totalWon;
+      if (response.ok) {
+        const { users } = await response.json();
+        const analytics: PlayerAnalytics[] = users.map((user: any) => {
+          const totalWagered = Math.random() * 1000 + user.totalLosses;
+          const totalWon = totalWagered * (0.85 + Math.random() * 0.1);
+          const netLoss = totalWagered - totalWon;
 
-      return {
-        userId: user.id,
-        name: user.name,
-        email: user.email,
-        totalLosses: user.totalLosses,
-        totalWagered,
-        totalWon,
-        netLoss,
-        kycStatus: user.kycStatus,
-        verified: user.verified,
-        registeredDate: user.createdAt,
-        lastActive: user.lastLoginAt,
-        riskLevel: netLoss > 200 ? "high" : netLoss > 100 ? "medium" : "low",
-      };
-    });
+          return {
+            userId: user.id,
+            name: user.name,
+            email: user.email,
+            totalLosses: user.totalLosses,
+            totalWagered,
+            totalWon,
+            netLoss,
+            kycStatus: user.kycStatus,
+            verified: user.verified,
+            registeredDate: new Date(user.createdAt),
+            lastActive: user.lastLoginAt ? new Date(user.lastLoginAt) : new Date(),
+            riskLevel: netLoss > 200 ? "high" : netLoss > 100 ? "medium" : "low",
+          };
+        });
 
-    setPlayers(analytics);
-    setLoading(false);
+        setPlayers(analytics);
+      }
+    } catch (error) {
+      console.error("Failed to load player data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadDashboardStats = async () => {
+    if (!token) return;
+    try {
+      const response = await fetch("/api/admin/dashboard", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error("Failed to load dashboard stats:", error);
+    }
   };
 
   const filterPlayers = () => {
