@@ -96,7 +96,12 @@ async function initializePackagesTable() {
           color: "from-amber-400 to-amber-600",
           is_popular: false,
           is_best_value: true,
-          features: ["1500 Gold Coins", "750 Free Sweep Coins", "33% Bonus", "Exclusive Rewards"],
+          features: [
+            "1500 Gold Coins",
+            "750 Free Sweep Coins",
+            "33% Bonus",
+            "Exclusive Rewards",
+          ],
           display_order: 3,
         },
         {
@@ -109,7 +114,12 @@ async function initializePackagesTable() {
           color: "from-red-500 to-red-600",
           is_popular: false,
           is_best_value: false,
-          features: ["5000 Gold Coins", "2500 Free Sweep Coins", "50% Bonus", "VIP Treatment"],
+          features: [
+            "5000 Gold Coins",
+            "2500 Free Sweep Coins",
+            "50% Bonus",
+            "VIP Treatment",
+          ],
           display_order: 4,
         },
       ];
@@ -149,7 +159,10 @@ export const getPackages: RequestHandler = async (req: any, res) => {
     );
     const packages = result.rows.map((row: any) => ({
       ...row,
-      features: typeof row.features === "string" ? JSON.parse(row.features) : row.features,
+      features:
+        typeof row.features === "string"
+          ? JSON.parse(row.features)
+          : row.features,
     }));
     res.json({ packages });
   } catch (error) {
@@ -161,10 +174,15 @@ export const getPackages: RequestHandler = async (req: any, res) => {
 // Get all packages (admin)
 export const getPackagesAdmin: RequestHandler = async (req: any, res) => {
   try {
-    const result = await db.query("SELECT * FROM packages ORDER BY display_order ASC");
+    const result = await db.query(
+      "SELECT * FROM packages ORDER BY display_order ASC",
+    );
     const packages = result.rows.map((row: any) => ({
       ...row,
-      features: typeof row.features === "string" ? JSON.parse(row.features) : row.features,
+      features:
+        typeof row.features === "string"
+          ? JSON.parse(row.features)
+          : row.features,
     }));
     res.json({ packages });
   } catch (error) {

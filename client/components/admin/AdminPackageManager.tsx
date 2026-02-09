@@ -185,27 +185,30 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
     if (!token || !selectedPackage) return;
 
     try {
-      const response = await fetch(`/api/admin/packages/${selectedPackage.id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `/api/admin/packages/${selectedPackage.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            goldCoins: formData.goldCoins,
+            bonusSweepCoins: formData.bonusSweepCoins,
+            price: formData.price,
+            originalPrice: formData.originalPrice || null,
+            icon: formData.icon,
+            color: formData.color,
+            isPopular: formData.isPopular,
+            isBestValue: formData.isBestValue,
+            features: parseFeatures(formData.features),
+            isActive: formData.isActive,
+            displayOrder: formData.displayOrder,
+          }),
         },
-        body: JSON.stringify({
-          name: formData.name,
-          goldCoins: formData.goldCoins,
-          bonusSweepCoins: formData.bonusSweepCoins,
-          price: formData.price,
-          originalPrice: formData.originalPrice || null,
-          icon: formData.icon,
-          color: formData.color,
-          isPopular: formData.isPopular,
-          isBestValue: formData.isBestValue,
-          features: parseFeatures(formData.features),
-          isActive: formData.isActive,
-          displayOrder: formData.displayOrder,
-        }),
-      });
+      );
 
       if (response.ok) {
         toast.success("Package updated");
@@ -306,7 +309,9 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
+            <div className="text-3xl font-bold">
+              ${stats.totalRevenue.toFixed(2)}
+            </div>
             <p className="text-xs text-muted-foreground">From package sales</p>
           </CardContent>
         </Card>
@@ -317,9 +322,14 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Gold Coin Packages</CardTitle>
-            <CardDescription>Manage packages available in the store</CardDescription>
+            <CardDescription>
+              Manage packages available in the store
+            </CardDescription>
           </div>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -443,7 +453,10 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCreateDialogOpen(false)}
+                >
                   Cancel
                 </Button>
                 <Button onClick={createPackage}>Create Package</Button>
@@ -489,7 +502,9 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                           </div>
                         )}
                       </TableCell>
-                      <TableCell className="font-bold">${pkg.price.toFixed(2)}</TableCell>
+                      <TableCell className="font-bold">
+                        ${pkg.price.toFixed(2)}
+                      </TableCell>
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
                           {pkg.is_popular && (
@@ -505,14 +520,18 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={pkg.is_active ? "default" : "secondary"}>
+                        <Badge
+                          variant={pkg.is_active ? "default" : "secondary"}
+                        >
                           {pkg.is_active ? "Active" : "Inactive"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex gap-2 justify-end">
                           <Dialog
-                            open={isEditDialogOpen && selectedPackage?.id === pkg.id}
+                            open={
+                              isEditDialogOpen && selectedPackage?.id === pkg.id
+                            }
                             onOpenChange={setIsEditDialogOpen}
                           >
                             <DialogTrigger asChild>
@@ -530,19 +549,26 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <Label htmlFor="edit-name">Package Name</Label>
+                                  <Label htmlFor="edit-name">
+                                    Package Name
+                                  </Label>
                                   <Input
                                     id="edit-name"
                                     value={formData.name}
                                     onChange={(e) =>
-                                      setFormData({ ...formData, name: e.target.value })
+                                      setFormData({
+                                        ...formData,
+                                        name: e.target.value,
+                                      })
                                     }
                                   />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <Label htmlFor="edit-goldCoins">Gold Coins</Label>
+                                    <Label htmlFor="edit-goldCoins">
+                                      Gold Coins
+                                    </Label>
                                     <Input
                                       id="edit-goldCoins"
                                       type="number"
@@ -550,13 +576,16 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                                       onChange={(e) =>
                                         setFormData({
                                           ...formData,
-                                          goldCoins: parseInt(e.target.value) || 0,
+                                          goldCoins:
+                                            parseInt(e.target.value) || 0,
                                         })
                                       }
                                     />
                                   </div>
                                   <div>
-                                    <Label htmlFor="edit-price">Price ($)</Label>
+                                    <Label htmlFor="edit-price">
+                                      Price ($)
+                                    </Label>
                                     <Input
                                       id="edit-price"
                                       type="number"
@@ -565,7 +594,8 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                                       onChange={(e) =>
                                         setFormData({
                                           ...formData,
-                                          price: parseFloat(e.target.value) || 0,
+                                          price:
+                                            parseFloat(e.target.value) || 0,
                                         })
                                       }
                                     />
@@ -578,7 +608,10 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                                     id="edit-isActive"
                                     checked={formData.isActive}
                                     onCheckedChange={(checked) =>
-                                      setFormData({ ...formData, isActive: checked })
+                                      setFormData({
+                                        ...formData,
+                                        isActive: checked,
+                                      })
                                     }
                                   />
                                 </div>
@@ -590,7 +623,9 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                                 >
                                   Cancel
                                 </Button>
-                                <Button onClick={updatePackage}>Save Changes</Button>
+                                <Button onClick={updatePackage}>
+                                  Save Changes
+                                </Button>
                               </DialogFooter>
                             </DialogContent>
                           </Dialog>
@@ -630,7 +665,10 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
           <CardContent>
             <div className="space-y-3">
               {stats.topPackages.map((pkg: any, idx: number) => (
-                <div key={idx} className="flex justify-between items-center p-3 bg-secondary rounded-lg">
+                <div
+                  key={idx}
+                  className="flex justify-between items-center p-3 bg-secondary rounded-lg"
+                >
                   <div>
                     <div className="font-medium">{pkg.name}</div>
                     <div className="text-sm text-muted-foreground">
@@ -638,7 +676,9 @@ export function AdminPackageManager({ token }: AdminPackageManagerProps) {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold">${parseFloat(pkg.revenue).toFixed(2)}</div>
+                    <div className="font-bold">
+                      ${parseFloat(pkg.revenue).toFixed(2)}
+                    </div>
                   </div>
                 </div>
               ))}
