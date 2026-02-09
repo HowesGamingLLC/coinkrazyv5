@@ -103,7 +103,9 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
         const data = await response.json();
         setUsers(data.users);
         setTotalUsers(data.users.length);
-        setVerifiedUsers(data.users.filter((u: AdminUser) => u.verified).length);
+        setVerifiedUsers(
+          data.users.filter((u: AdminUser) => u.verified).length,
+        );
       } else {
         toast.error("Failed to load users");
       }
@@ -122,7 +124,7 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
       filtered = filtered.filter(
         (user) =>
           user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase())
+          user.email.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -248,7 +250,10 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
           <CardContent>
             <div className="text-2xl font-bold">{verifiedUsers}</div>
             <p className="text-xs text-muted-foreground">
-              {totalUsers > 0 ? Math.round((verifiedUsers / totalUsers) * 100) : 0}%
+              {totalUsers > 0
+                ? Math.round((verifiedUsers / totalUsers) * 100)
+                : 0}
+              %
             </p>
           </CardContent>
         </Card>
@@ -261,7 +266,9 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalUsers - verifiedUsers}</div>
+            <div className="text-2xl font-bold">
+              {totalUsers - verifiedUsers}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -270,7 +277,9 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
       <Card>
         <CardHeader>
           <CardTitle>User Management</CardTitle>
-          <CardDescription>View and manage all users in the system</CardDescription>
+          <CardDescription>
+            View and manage all users in the system
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Search and Filter */}
@@ -306,7 +315,9 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
             </div>
 
             <Button onClick={loadUsers} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+              />
               Refresh
             </Button>
           </div>
@@ -344,18 +355,24 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
                       <TableCell>
                         <div>
                           <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-muted-foreground">{user.email}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {user.email}
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={user.verified ? "default" : "secondary"}>
+                        <Badge
+                          variant={user.verified ? "default" : "secondary"}
+                        >
                           {user.verified ? "Verified" : "Unverified"}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           {getKYCIcon(user.kycStatus)}
-                          <span className="text-sm capitalize">{user.kycStatus}</span>
+                          <span className="text-sm capitalize">
+                            {user.kycStatus}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -373,7 +390,12 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex gap-2 justify-end">
-                          <Dialog open={isEditDialogOpen && selectedUser?.id === user.id} onOpenChange={setIsEditDialogOpen}>
+                          <Dialog
+                            open={
+                              isEditDialogOpen && selectedUser?.id === user.id
+                            }
+                            onOpenChange={setIsEditDialogOpen}
+                          >
                             <DialogTrigger asChild>
                               <Button
                                 size="sm"
@@ -394,7 +416,10 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
                                     id="name"
                                     value={editData.name}
                                     onChange={(e) =>
-                                      setEditData({ ...editData, name: e.target.value })
+                                      setEditData({
+                                        ...editData,
+                                        name: e.target.value,
+                                      })
                                     }
                                   />
                                 </div>
@@ -405,7 +430,10 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
                                     id="verified"
                                     checked={editData.verified}
                                     onCheckedChange={(checked) =>
-                                      setEditData({ ...editData, verified: checked })
+                                      setEditData({
+                                        ...editData,
+                                        verified: checked,
+                                      })
                                     }
                                   />
                                 </div>
@@ -415,17 +443,28 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
                                   <Select
                                     value={editData.kycStatus}
                                     onValueChange={(value) =>
-                                      setEditData({ ...editData, kycStatus: value })
+                                      setEditData({
+                                        ...editData,
+                                        kycStatus: value,
+                                      })
                                     }
                                   >
                                     <SelectTrigger>
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      <SelectItem value="not_submitted">Not Submitted</SelectItem>
-                                      <SelectItem value="pending">Pending</SelectItem>
-                                      <SelectItem value="approved">Approved</SelectItem>
-                                      <SelectItem value="rejected">Rejected</SelectItem>
+                                      <SelectItem value="not_submitted">
+                                        Not Submitted
+                                      </SelectItem>
+                                      <SelectItem value="pending">
+                                        Pending
+                                      </SelectItem>
+                                      <SelectItem value="approved">
+                                        Approved
+                                      </SelectItem>
+                                      <SelectItem value="rejected">
+                                        Rejected
+                                      </SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </div>
@@ -436,16 +475,24 @@ export function AdminUserManagement({ token }: AdminUserManagementProps) {
                                     id="admin"
                                     checked={editData.isAdmin}
                                     onCheckedChange={(checked) =>
-                                      setEditData({ ...editData, isAdmin: checked })
+                                      setEditData({
+                                        ...editData,
+                                        isAdmin: checked,
+                                      })
                                     }
                                   />
                                 </div>
                               </div>
                               <DialogFooter>
-                                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setIsEditDialogOpen(false)}
+                                >
                                   Cancel
                                 </Button>
-                                <Button onClick={updateUser}>Save Changes</Button>
+                                <Button onClick={updateUser}>
+                                  Save Changes
+                                </Button>
                               </DialogFooter>
                             </DialogContent>
                           </Dialog>

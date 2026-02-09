@@ -72,9 +72,12 @@ export function AdminGames({ token }: AdminGamesProps) {
     totalProviders: 0,
   });
 
-  const [isCreateProviderDialogOpen, setIsCreateProviderDialogOpen] = useState(false);
+  const [isCreateProviderDialogOpen, setIsCreateProviderDialogOpen] =
+    useState(false);
   const [isCreateGameDialogOpen, setIsCreateGameDialogOpen] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(
+    null,
+  );
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
   const [providerForm, setProviderForm] = useState({
@@ -342,7 +345,10 @@ export function AdminGames({ token }: AdminGamesProps) {
               <CardTitle>Game Catalog</CardTitle>
               <CardDescription>Manage games in the system</CardDescription>
             </div>
-            <Dialog open={isCreateGameDialogOpen} onOpenChange={setIsCreateGameDialogOpen}>
+            <Dialog
+              open={isCreateGameDialogOpen}
+              onOpenChange={setIsCreateGameDialogOpen}
+            >
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
@@ -403,7 +409,10 @@ export function AdminGames({ token }: AdminGamesProps) {
                       id="description"
                       value={gameForm.description}
                       onChange={(e) =>
-                        setGameForm({ ...gameForm, description: e.target.value })
+                        setGameForm({
+                          ...gameForm,
+                          description: e.target.value,
+                        })
                       }
                       placeholder="Description"
                     />
@@ -450,13 +459,17 @@ export function AdminGames({ token }: AdminGamesProps) {
                   ) : (
                     games.map((game) => (
                       <TableRow key={game.id}>
-                        <TableCell className="font-medium">{game.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {game.name}
+                        </TableCell>
                         <TableCell>{game.provider_name}</TableCell>
                         <TableCell className="font-mono text-sm">
                           {game.game_id}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={game.enabled ? "default" : "secondary"}>
+                          <Badge
+                            variant={game.enabled ? "default" : "secondary"}
+                          >
                             {game.enabled ? "Enabled" : "Disabled"}
                           </Badge>
                         </TableCell>
@@ -528,7 +541,10 @@ export function AdminGames({ token }: AdminGamesProps) {
                       id="providerName"
                       value={providerForm.name}
                       onChange={(e) =>
-                        setProviderForm({ ...providerForm, name: e.target.value })
+                        setProviderForm({
+                          ...providerForm,
+                          name: e.target.value,
+                        })
                       }
                       placeholder="Provider name"
                     />
@@ -540,7 +556,10 @@ export function AdminGames({ token }: AdminGamesProps) {
                       id="providerType"
                       value={providerForm.type}
                       onChange={(e) =>
-                        setProviderForm({ ...providerForm, type: e.target.value })
+                        setProviderForm({
+                          ...providerForm,
+                          type: e.target.value,
+                        })
                       }
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
@@ -591,12 +610,16 @@ export function AdminGames({ token }: AdminGamesProps) {
                   ) : (
                     providers.map((provider) => (
                       <TableRow key={provider.id}>
-                        <TableCell className="font-medium">{provider.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {provider.name}
+                        </TableCell>
                         <TableCell>
                           <Badge variant="outline">{provider.type}</Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={provider.enabled ? "default" : "secondary"}>
+                          <Badge
+                            variant={provider.enabled ? "default" : "secondary"}
+                          >
                             {provider.enabled ? "Enabled" : "Disabled"}
                           </Badge>
                         </TableCell>

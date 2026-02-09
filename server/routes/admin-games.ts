@@ -61,7 +61,9 @@ export const initGamesDB = initializeGamesTables;
 // Provider Management
 export const getProviders: RequestHandler = async (req: any, res) => {
   try {
-    const result = await db.query("SELECT * FROM providers ORDER BY created_at DESC");
+    const result = await db.query(
+      "SELECT * FROM providers ORDER BY created_at DESC",
+    );
     res.json({ providers: result.rows });
   } catch (error) {
     console.error("Get providers error:", error);
@@ -299,7 +301,9 @@ export const removeFromBlacklist: RequestHandler = async (req: any, res) => {
 // Game Statistics
 export const getGameStats: RequestHandler = async (req: any, res) => {
   try {
-    const totalGamesResult = await db.query("SELECT COUNT(*) as count FROM games");
+    const totalGamesResult = await db.query(
+      "SELECT COUNT(*) as count FROM games",
+    );
     const enabledGamesResult = await db.query(
       "SELECT COUNT(*) as count FROM games WHERE enabled = true",
     );

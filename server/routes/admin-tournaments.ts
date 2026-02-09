@@ -127,7 +127,16 @@ export const getTournamentDetails: RequestHandler = async (req: any, res) => {
 
 export const createTournament: RequestHandler = async (req: any, res) => {
   try {
-    const { name, description, type, startDate, endDate, entryFee, prizePool, maxParticipants } = req.body;
+    const {
+      name,
+      description,
+      type,
+      startDate,
+      endDate,
+      entryFee,
+      prizePool,
+      maxParticipants,
+    } = req.body;
 
     if (!name || !type) {
       return res.status(400).json({ error: "Name and type are required" });
@@ -137,7 +146,17 @@ export const createTournament: RequestHandler = async (req: any, res) => {
       `INSERT INTO tournaments (name, description, type, start_date, end_date, entry_fee, prize_pool, max_participants, created_by)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
-      [name, description || "", type, startDate, endDate, entryFee || 0, prizePool || 0, maxParticipants, req.user.id],
+      [
+        name,
+        description || "",
+        type,
+        startDate,
+        endDate,
+        entryFee || 0,
+        prizePool || 0,
+        maxParticipants,
+        req.user.id,
+      ],
     );
 
     res.json({ tournament: result.rows[0] });
@@ -150,7 +169,15 @@ export const createTournament: RequestHandler = async (req: any, res) => {
 export const updateTournament: RequestHandler = async (req: any, res) => {
   try {
     const { tournamentId } = req.params;
-    const { name, description, status, startDate, endDate, prizePool, maxParticipants } = req.body;
+    const {
+      name,
+      description,
+      status,
+      startDate,
+      endDate,
+      prizePool,
+      maxParticipants,
+    } = req.body;
 
     const updates: string[] = [];
     const values: any[] = [];
@@ -212,8 +239,14 @@ export const deleteTournament: RequestHandler = async (req: any, res) => {
     const { tournamentId } = req.params;
 
     // Delete related records
-    await db.query("DELETE FROM tournament_leaderboard WHERE tournament_id = $1", [tournamentId]);
-    await db.query("DELETE FROM tournament_participants WHERE tournament_id = $1", [tournamentId]);
+    await db.query(
+      "DELETE FROM tournament_leaderboard WHERE tournament_id = $1",
+      [tournamentId],
+    );
+    await db.query(
+      "DELETE FROM tournament_participants WHERE tournament_id = $1",
+      [tournamentId],
+    );
     await db.query("DELETE FROM tournaments WHERE id = $1", [tournamentId]);
 
     res.json({ success: true, message: "Tournament deleted" });
@@ -295,9 +328,10 @@ export const updateLeaderboard: RequestHandler = async (req: any, res) => {
     }
 
     // Clear existing leaderboard
-    await db.query("DELETE FROM tournament_leaderboard WHERE tournament_id = $1", [
-      tournamentId,
-    ]);
+    await db.query(
+      "DELETE FROM tournament_leaderboard WHERE tournament_id = $1",
+      [tournamentId],
+    );
 
     // Insert new leaderboard entries
     for (const entry of leaderboardData) {

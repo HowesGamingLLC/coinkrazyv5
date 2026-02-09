@@ -197,7 +197,11 @@ export function createServer() {
   app.get("/api/admin/providers", ...requireAdmin, getProviders);
   app.post("/api/admin/providers", ...requireAdmin, createProvider);
   app.post("/api/admin/providers/:providerId", ...requireAdmin, updateProvider);
-  app.delete("/api/admin/providers/:providerId", ...requireAdmin, deleteProvider);
+  app.delete(
+    "/api/admin/providers/:providerId",
+    ...requireAdmin,
+    deleteProvider,
+  );
 
   app.get("/api/admin/games", ...requireAdmin, getGames);
   app.post("/api/admin/games", ...requireAdmin, createGame);
@@ -207,15 +211,31 @@ export function createServer() {
   app.get("/api/admin/games-stats", ...requireAdmin, getGameStats);
   app.get("/api/admin/blacklist", ...requireAdmin, getBlacklist);
   app.post("/api/admin/blacklist", ...requireAdmin, addToBlacklist);
-  app.delete("/api/admin/blacklist/:blacklistId", ...requireAdmin, removeFromBlacklist);
+  app.delete(
+    "/api/admin/blacklist/:blacklistId",
+    ...requireAdmin,
+    removeFromBlacklist,
+  );
 
   // Admin API routes - Financial Management
   app.get("/api/admin/transactions", ...requireAdmin, getTransactions);
-  app.get("/api/admin/transactions/stats", ...requireAdmin, getTransactionStats);
+  app.get(
+    "/api/admin/transactions/stats",
+    ...requireAdmin,
+    getTransactionStats,
+  );
 
   app.get("/api/admin/withdrawals", ...requireAdmin, getWithdrawals);
-  app.post("/api/admin/withdrawals/:withdrawalId/approve", ...requireAdmin, approveWithdrawal);
-  app.post("/api/admin/withdrawals/:withdrawalId/reject", ...requireAdmin, rejectWithdrawal);
+  app.post(
+    "/api/admin/withdrawals/:withdrawalId/approve",
+    ...requireAdmin,
+    approveWithdrawal,
+  );
+  app.post(
+    "/api/admin/withdrawals/:withdrawalId/reject",
+    ...requireAdmin,
+    rejectWithdrawal,
+  );
   app.get("/api/admin/withdrawals/stats", ...requireAdmin, getWithdrawalStats);
 
   app.get("/api/admin/balances/:userId", ...requireAdmin, getUserBalance);
@@ -226,16 +246,44 @@ export function createServer() {
 
   // Admin API routes - Tournament Management
   app.get("/api/admin/tournaments", ...requireAdmin, getAllTournaments);
-  app.get("/api/admin/tournaments/:tournamentId", ...requireAdmin, getTournamentDetails);
+  app.get(
+    "/api/admin/tournaments/:tournamentId",
+    ...requireAdmin,
+    getTournamentDetails,
+  );
   app.post("/api/admin/tournaments", ...requireAdmin, createTournament);
-  app.post("/api/admin/tournaments/:tournamentId", ...requireAdmin, updateTournament);
-  app.delete("/api/admin/tournaments/:tournamentId", ...requireAdmin, deleteTournament);
+  app.post(
+    "/api/admin/tournaments/:tournamentId",
+    ...requireAdmin,
+    updateTournament,
+  );
+  app.delete(
+    "/api/admin/tournaments/:tournamentId",
+    ...requireAdmin,
+    deleteTournament,
+  );
 
-  app.post("/api/admin/tournaments/:tournamentId/start", ...requireAdmin, startTournament);
-  app.post("/api/admin/tournaments/:tournamentId/end", ...requireAdmin, endTournament);
-  app.post("/api/admin/tournaments/:tournamentId/cancel", ...requireAdmin, cancelTournament);
+  app.post(
+    "/api/admin/tournaments/:tournamentId/start",
+    ...requireAdmin,
+    startTournament,
+  );
+  app.post(
+    "/api/admin/tournaments/:tournamentId/end",
+    ...requireAdmin,
+    endTournament,
+  );
+  app.post(
+    "/api/admin/tournaments/:tournamentId/cancel",
+    ...requireAdmin,
+    cancelTournament,
+  );
 
-  app.post("/api/admin/tournaments/:tournamentId/leaderboard", ...requireAdmin, updateLeaderboard);
+  app.post(
+    "/api/admin/tournaments/:tournamentId/leaderboard",
+    ...requireAdmin,
+    updateLeaderboard,
+  );
   app.get("/api/admin/tournaments/stats", ...requireAdmin, getTournamentStats);
 
   return app;

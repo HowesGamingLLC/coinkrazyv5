@@ -71,7 +71,8 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
+  const [selectedTournament, setSelectedTournament] =
+    useState<Tournament | null>(null);
   const [stats, setStats] = useState({
     activeTournaments: 0,
     totalParticipants: 0,
@@ -194,7 +195,7 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
             prizePool: formData.prizePool,
             maxParticipants: formData.maxParticipants,
           }),
-        }
+        },
       );
 
       if (response.ok) {
@@ -216,13 +217,10 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
     if (!window.confirm("Delete this tournament?")) return;
 
     try {
-      const response = await fetch(
-        `/api/admin/tournaments/${tournamentId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const response = await fetch(`/api/admin/tournaments/${tournamentId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       if (response.ok) {
         toast.success("Tournament deleted");
@@ -239,7 +237,7 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
 
   const changeTournamentStatus = async (
     tournamentId: string,
-    action: "start" | "end" | "cancel"
+    action: "start" | "end" | "cancel",
   ) => {
     if (!token) return;
 
@@ -249,7 +247,7 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       if (response.ok) {
@@ -327,7 +325,9 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${stats.totalPrizePool.toFixed(2)}</div>
+            <div className="text-2xl font-bold">
+              ${stats.totalPrizePool.toFixed(2)}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -339,7 +339,10 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
             <CardTitle>Tournaments</CardTitle>
             <CardDescription>Create and manage tournaments</CardDescription>
           </div>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -484,7 +487,9 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
                 ) : (
                   tournaments.map((tournament) => (
                     <TableRow key={tournament.id}>
-                      <TableCell className="font-medium">{tournament.name}</TableCell>
+                      <TableCell className="font-medium">
+                        {tournament.name}
+                      </TableCell>
                       <TableCell>
                         <Badge variant="outline">{tournament.type}</Badge>
                       </TableCell>
@@ -494,7 +499,8 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {tournament.current_participants} / {tournament.max_participants}
+                        {tournament.current_participants} /{" "}
+                        {tournament.max_participants}
                       </TableCell>
                       <TableCell>${tournament.prize_pool.toFixed(2)}</TableCell>
                       <TableCell>
@@ -526,7 +532,10 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
                           )}
 
                           <Dialog
-                            open={isEditDialogOpen && selectedTournament?.id === tournament.id}
+                            open={
+                              isEditDialogOpen &&
+                              selectedTournament?.id === tournament.id
+                            }
                             onOpenChange={setIsEditDialogOpen}
                           >
                             <DialogTrigger asChild>
@@ -549,13 +558,18 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
                                     id="edit-name"
                                     value={formData.name}
                                     onChange={(e) =>
-                                      setFormData({ ...formData, name: e.target.value })
+                                      setFormData({
+                                        ...formData,
+                                        name: e.target.value,
+                                      })
                                     }
                                   />
                                 </div>
 
                                 <div>
-                                  <Label htmlFor="edit-description">Description</Label>
+                                  <Label htmlFor="edit-description">
+                                    Description
+                                  </Label>
                                   <Textarea
                                     id="edit-description"
                                     value={formData.description}
@@ -570,7 +584,9 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
 
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <Label htmlFor="edit-prizePool">Prize Pool</Label>
+                                    <Label htmlFor="edit-prizePool">
+                                      Prize Pool
+                                    </Label>
                                     <Input
                                       id="edit-prizePool"
                                       type="number"
@@ -578,7 +594,8 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
                                       onChange={(e) =>
                                         setFormData({
                                           ...formData,
-                                          prizePool: parseFloat(e.target.value) || 0,
+                                          prizePool:
+                                            parseFloat(e.target.value) || 0,
                                         })
                                       }
                                     />
@@ -595,7 +612,8 @@ export function AdminTournaments({ token }: AdminTournamentsProps) {
                                       onChange={(e) =>
                                         setFormData({
                                           ...formData,
-                                          maxParticipants: parseInt(e.target.value) || 100,
+                                          maxParticipants:
+                                            parseInt(e.target.value) || 100,
                                         })
                                       }
                                     />

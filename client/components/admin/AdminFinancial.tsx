@@ -77,7 +77,8 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
   const [summary, setSummary] = useState<FinancialSummary | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
-  const [selectedWithdrawal, setSelectedWithdrawal] = useState<Withdrawal | null>(null);
+  const [selectedWithdrawal, setSelectedWithdrawal] =
+    useState<Withdrawal | null>(null);
   const [isProcessingDialog, setIsProcessingDialog] = useState(false);
   const [adjustmentData, setAdjustmentData] = useState({
     userId: "",
@@ -104,20 +105,21 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
     setLoading(true);
 
     try {
-      const [summaryRes, transactionsRes, withdrawalsRes, revenueRes] = await Promise.all([
-        fetch("/api/admin/financial-summary", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch("/api/admin/transactions", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch("/api/admin/withdrawals", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch("/api/admin/revenue-report", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ]);
+      const [summaryRes, transactionsRes, withdrawalsRes, revenueRes] =
+        await Promise.all([
+          fetch("/api/admin/financial-summary", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/admin/transactions", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/admin/withdrawals", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/admin/revenue-report", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
 
       if (summaryRes.ok) {
         const data = await summaryRes.json();
@@ -150,10 +152,13 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
     if (!token) return;
 
     try {
-      const response = await fetch(`/api/admin/withdrawals/${withdrawalId}/approve`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `/api/admin/withdrawals/${withdrawalId}/approve`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       if (response.ok) {
         toast.success("Withdrawal approved");
@@ -174,11 +179,14 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
     if (!window.confirm("Reject this withdrawal?")) return;
 
     try {
-      const response = await fetch(`/api/admin/withdrawals/${withdrawalId}/reject`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ reason: "Rejected by admin" }),
-      });
+      const response = await fetch(
+        `/api/admin/withdrawals/${withdrawalId}/reject`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ reason: "Rejected by admin" }),
+        },
+      );
 
       if (response.ok) {
         toast.success("Withdrawal rejected");
@@ -199,25 +207,30 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
     }
 
     const totalChange =
-      adjustmentData.goldCoins + adjustmentData.sweepCoins + adjustmentData.realMoney;
+      adjustmentData.goldCoins +
+      adjustmentData.sweepCoins +
+      adjustmentData.realMoney;
     if (totalChange === 0) {
       toast.error("Enter an amount to adjust");
       return;
     }
 
     try {
-      const response = await fetch(`/api/admin/balances/${adjustmentData.userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        `/api/admin/balances/${adjustmentData.userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            goldCoins: adjustmentData.goldCoins,
+            sweepCoins: adjustmentData.sweepCoins,
+            realMoney: adjustmentData.realMoney,
+          }),
         },
-        body: JSON.stringify({
-          goldCoins: adjustmentData.goldCoins,
-          sweepCoins: adjustmentData.sweepCoins,
-          realMoney: adjustmentData.realMoney,
-        }),
-      });
+      );
 
       if (response.ok) {
         toast.success("Balance adjusted successfully");
@@ -290,7 +303,9 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">${revenueReport.netRevenue.toFixed(2)}</div>
+              <div className="text-2xl font-bold">
+                ${revenueReport.netRevenue.toFixed(2)}
+              </div>
               <p className="text-xs text-muted-foreground">
                 {revenueReport.margin.toFixed(1)}% margin
               </p>
@@ -321,16 +336,22 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <div className="text-sm text-muted-foreground">Total Users</div>
-                <div className="text-3xl font-bold">{summary?.totalUsers || 0}</div>
+                <div className="text-3xl font-bold">
+                  {summary?.totalUsers || 0}
+                </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Total Balance</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Balance
+                </div>
                 <div className="text-3xl font-bold">
                   ${summary?.totalBalance.toFixed(2) || "0.00"}
                 </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Average Balance</div>
+                <div className="text-sm text-muted-foreground">
+                  Average Balance
+                </div>
                 <div className="text-3xl font-bold">
                   $
                   {summary && summary.totalUsers > 0
@@ -343,7 +364,9 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
         </Card>
 
         <Button onClick={loadFinancialData} disabled={loading}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+          />
           Refresh Data
         </Button>
       </TabsContent>
@@ -353,7 +376,9 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
         <Card>
           <CardHeader>
             <CardTitle>Withdrawal Requests</CardTitle>
-            <CardDescription>Manage pending withdrawal requests</CardDescription>
+            <CardDescription>
+              Manage pending withdrawal requests
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="rounded-lg border overflow-x-auto">
@@ -407,12 +432,20 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
                           {new Date(withdrawal.created_at).toLocaleDateString()}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Dialog open={isProcessingDialog && selectedWithdrawal?.id === withdrawal.id} onOpenChange={setIsProcessingDialog}>
+                          <Dialog
+                            open={
+                              isProcessingDialog &&
+                              selectedWithdrawal?.id === withdrawal.id
+                            }
+                            onOpenChange={setIsProcessingDialog}
+                          >
                             <DialogTrigger asChild>
                               {withdrawal.status === "pending" && (
                                 <Button
                                   size="sm"
-                                  onClick={() => setSelectedWithdrawal(withdrawal)}
+                                  onClick={() =>
+                                    setSelectedWithdrawal(withdrawal)
+                                  }
                                 >
                                   Process
                                 </Button>
@@ -425,13 +458,19 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
                               <div className="space-y-4">
                                 <div>
                                   <Label>User: {withdrawal.name}</Label>
-                                  <p className="text-sm text-muted-foreground">{withdrawal.email}</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {withdrawal.email}
+                                  </p>
                                 </div>
                                 <div>
-                                  <Label>Amount: ${withdrawal.amount.toFixed(2)}</Label>
+                                  <Label>
+                                    Amount: ${withdrawal.amount.toFixed(2)}
+                                  </Label>
                                 </div>
                                 <div>
-                                  <Label>Payment Method: {withdrawal.payment_method}</Label>
+                                  <Label>
+                                    Payment Method: {withdrawal.payment_method}
+                                  </Label>
                                 </div>
                               </div>
                               <DialogFooter className="gap-2">
@@ -501,10 +540,13 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
                         <TableCell>
                           <span
                             className={
-                              transaction.amount > 0 ? "text-green-600" : "text-red-600"
+                              transaction.amount > 0
+                                ? "text-green-600"
+                                : "text-red-600"
                             }
                           >
-                            {transaction.amount > 0 ? "+" : ""}${transaction.amount.toFixed(2)}
+                            {transaction.amount > 0 ? "+" : ""}$
+                            {transaction.amount.toFixed(2)}
                           </span>
                         </TableCell>
                         <TableCell>{transaction.description}</TableCell>
@@ -512,7 +554,9 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
                           <Badge>{transaction.status}</Badge>
                         </TableCell>
                         <TableCell>
-                          {new Date(transaction.created_at).toLocaleDateString()}
+                          {new Date(
+                            transaction.created_at,
+                          ).toLocaleDateString()}
                         </TableCell>
                       </TableRow>
                     ))
@@ -529,7 +573,9 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
         <Card>
           <CardHeader>
             <CardTitle>Adjust User Balance</CardTitle>
-            <CardDescription>Add or remove currency from user accounts</CardDescription>
+            <CardDescription>
+              Add or remove currency from user accounts
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -539,7 +585,10 @@ export function AdminFinancial({ token }: AdminFinancialProps) {
                 placeholder="Enter user UUID"
                 value={adjustmentData.userId}
                 onChange={(e) =>
-                  setAdjustmentData({ ...adjustmentData, userId: e.target.value })
+                  setAdjustmentData({
+                    ...adjustmentData,
+                    userId: e.target.value,
+                  })
                 }
               />
             </div>

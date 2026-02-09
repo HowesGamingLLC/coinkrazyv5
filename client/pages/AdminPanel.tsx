@@ -200,7 +200,9 @@ export default function AdminPanel() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.activeTournaments}</div>
+                <div className="text-2xl font-bold">
+                  {stats.activeTournaments}
+                </div>
                 <p className="text-xs text-muted-foreground">In progress</p>
               </CardContent>
             </Card>
@@ -208,7 +210,11 @@ export default function AdminPanel() {
         )}
 
         {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="users">
@@ -318,7 +324,9 @@ export default function AdminPanel() {
                   </div>
                   <div className="flex justify-between p-3 bg-secondary rounded-lg">
                     <span>Status</span>
-                    <Badge className="bg-green-100 text-green-800">Active</Badge>
+                    <Badge className="bg-green-100 text-green-800">
+                      Active
+                    </Badge>
                   </div>
                   <div className="flex justify-between p-3 bg-secondary rounded-lg">
                     <span>Last Login</span>

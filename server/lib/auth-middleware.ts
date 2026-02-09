@@ -34,9 +34,10 @@ export async function authMiddleware(
     }
 
     // Fetch user from DB to get current is_admin status
-    const result = await db.query("SELECT id, email, is_admin FROM users WHERE id = $1", [
-      payload.id,
-    ]);
+    const result = await db.query(
+      "SELECT id, email, is_admin FROM users WHERE id = $1",
+      [payload.id],
+    );
 
     if (!result.rows[0]) {
       return res.status(404).json({ error: "User not found" });
@@ -55,11 +56,7 @@ export async function authMiddleware(
   }
 }
 
-export function adminOnly(
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction,
-) {
+export function adminOnly(req: AuthRequest, res: Response, next: NextFunction) {
   if (!req.user) {
     return res.status(401).json({ error: "Authentication required" });
   }

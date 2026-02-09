@@ -70,7 +70,15 @@ export const initFinancialDB = initializeFinancialTables;
 // Transaction Management
 export const getTransactions: RequestHandler = async (req: any, res) => {
   try {
-    const { userId, type, status, startDate, endDate, page = 1, limit = 50 } = req.query;
+    const {
+      userId,
+      type,
+      status,
+      startDate,
+      endDate,
+      page = 1,
+      limit = 50,
+    } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     let query = "SELECT * FROM transactions WHERE 1=1";
@@ -121,8 +129,7 @@ export const getTransactionStats: RequestHandler = async (req: any, res) => {
     const params: any[] = [];
 
     if (startDate && endDate) {
-      dateFilter =
-        " WHERE created_at >= $1 AND created_at <= $2";
+      dateFilter = " WHERE created_at >= $1 AND created_at <= $2";
       params.push(startDate, endDate);
     }
 
@@ -410,7 +417,9 @@ export const getRevenueReport: RequestHandler = async (req: any, res) => {
 
 export const getFinancialSummary: RequestHandler = async (req: any, res) => {
   try {
-    const totalUsersResult = await db.query("SELECT COUNT(*) as count FROM users");
+    const totalUsersResult = await db.query(
+      "SELECT COUNT(*) as count FROM users",
+    );
     const totalBalanceResult = await db.query(
       "SELECT SUM(gold_coins + sweep_coins + real_money) as total FROM user_balances",
     );
@@ -422,7 +431,9 @@ export const getFinancialSummary: RequestHandler = async (req: any, res) => {
       summary: {
         totalUsers: parseInt(totalUsersResult.rows[0].count),
         totalBalance: parseFloat(totalBalanceResult.rows[0].total || 0),
-        pendingWithdrawals: parseFloat(pendingWithdrawalsResult.rows[0].total || 0),
+        pendingWithdrawals: parseFloat(
+          pendingWithdrawalsResult.rows[0].total || 0,
+        ),
       },
     });
   } catch (error) {

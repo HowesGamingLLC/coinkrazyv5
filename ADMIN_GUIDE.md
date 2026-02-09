@@ -12,6 +12,7 @@ The admin account is automatically created on first database initialization.
 ## Admin Features Overview
 
 ### 1. **User Management**
+
 - View all registered users with search and filtering
 - View user details (KYC status, verification, activity)
 - Edit user information (name, verified status, KYC status)
@@ -19,6 +20,7 @@ The admin account is automatically created on first database initialization.
 - Delete user accounts (except your own)
 
 **API Endpoints:**
+
 ```
 GET    /api/admin/users              # List all users
 GET    /api/admin/users/:userId      # Get user details
@@ -28,6 +30,7 @@ GET    /api/admin/users/:userId/stats # User statistics
 ```
 
 ### 2. **Player Analytics**
+
 - Track player losses and wagering behavior
 - Monitor KYC status and verification
 - Risk level assessment
@@ -37,23 +40,27 @@ GET    /api/admin/users/:userId/stats # User statistics
 ### 3. **Financial Management**
 
 #### Transactions
+
 - View all transactions with filtering
 - Track transaction type, status, amount
 - Filter by date range
 
 **API Endpoints:**
+
 ```
 GET /api/admin/transactions              # List transactions
 GET /api/admin/transactions/stats        # Transaction statistics
 ```
 
 #### Withdrawals
+
 - Manage pending withdrawal requests
 - Approve/reject withdrawals
 - Track withdrawal status and payment methods
 - View withdrawal statistics
 
 **API Endpoints:**
+
 ```
 GET    /api/admin/withdrawals                    # List withdrawals
 POST   /api/admin/withdrawals/:withdrawalId/approve  # Approve withdrawal
@@ -62,23 +69,27 @@ GET    /api/admin/withdrawals/stats              # Withdrawal statistics
 ```
 
 #### User Balance Management
+
 - View individual user balances (Gold Coins, Sweep Coins, Real Money)
 - Adjust balances for admin purposes
 - Automatic transaction recording
 
 **API Endpoints:**
+
 ```
 GET  /api/admin/balances/:userId      # View user balance
 POST /api/admin/balances/:userId      # Update user balance
 ```
 
 #### Financial Reports
+
 - Revenue analysis
 - Payout tracking
 - Bonus distribution
 - Net revenue calculations
 
 **API Endpoints:**
+
 ```
 GET /api/admin/revenue-report     # Get revenue report
 GET /api/admin/financial-summary  # Get financial summary
@@ -87,11 +98,13 @@ GET /api/admin/financial-summary  # Get financial summary
 ### 4. **Game & Provider Management**
 
 #### Providers
+
 - Add new game providers
 - Enable/disable providers
 - Manage provider configuration
 
 **API Endpoints:**
+
 ```
 GET    /api/admin/providers          # List providers
 POST   /api/admin/providers          # Create provider
@@ -100,11 +113,13 @@ DELETE /api/admin/providers/:providerId  # Delete provider
 ```
 
 #### Games
+
 - Manage game catalog
 - Enable/disable games
 - Search games by provider
 
 **API Endpoints:**
+
 ```
 GET    /api/admin/games           # List games
 POST   /api/admin/games           # Create game
@@ -114,11 +129,13 @@ GET    /api/admin/games-stats     # Game statistics
 ```
 
 #### Game Blacklist
+
 - Blacklist problematic games
 - Track blacklist reasons
 - Remove from blacklist
 
 **API Endpoints:**
+
 ```
 GET    /api/admin/blacklist              # View blacklist
 POST   /api/admin/blacklist              # Add to blacklist
@@ -128,6 +145,7 @@ DELETE /api/admin/blacklist/:blacklistId # Remove from blacklist
 ### 5. **Tournament Management**
 
 #### Create & Manage Tournaments
+
 - Create new tournaments with name, type, dates
 - Set entry fees and prize pools
 - Define max participants
@@ -135,6 +153,7 @@ DELETE /api/admin/blacklist/:blacklistId # Remove from blacklist
 - Delete tournaments
 
 **API Endpoints:**
+
 ```
 GET    /api/admin/tournaments              # List tournaments
 GET    /api/admin/tournaments/:tournamentId # Get details
@@ -144,11 +163,13 @@ DELETE /api/admin/tournaments/:tournamentId # Delete
 ```
 
 #### Tournament Status Management
+
 - Start tournaments
 - End tournaments
 - Cancel tournaments
 
 **API Endpoints:**
+
 ```
 POST /api/admin/tournaments/:tournamentId/start   # Start
 POST /api/admin/tournaments/:tournamentId/end     # End
@@ -156,10 +177,12 @@ POST /api/admin/tournaments/:tournamentId/cancel  # Cancel
 ```
 
 #### Leaderboard Management
+
 - Update tournament leaderboards
 - Manage rankings and prizes
 
 **API Endpoints:**
+
 ```
 POST /api/admin/tournaments/:tournamentId/leaderboard # Update leaderboard
 GET  /api/admin/tournaments/stats                     # Tournament statistics
@@ -174,6 +197,7 @@ GET  /api/admin/tournaments/stats                     # Tournament statistics
 - Session time limits
 
 **API Endpoints:**
+
 ```
 GET /api/admin/system           # System status
 GET /api/admin/dashboard        # Dashboard data
@@ -216,20 +240,24 @@ The JWT token is provided upon login and must be included in the `Authorization`
 ## Database Tables
 
 ### User Management
+
 - `users` - User accounts with admin flags
 - `user_balances` - User currency balances
 
 ### Games
+
 - `providers` - Game provider definitions
 - `games` - Game catalog
 - `game_blacklist` - Blacklisted games
 
 ### Financial
+
 - `transactions` - All financial transactions
 - `withdrawals` - Withdrawal requests
 - `user_balances` - User account balances
 
 ### Tournaments
+
 - `tournaments` - Tournament definitions
 - `tournament_participants` - Tournament registrations
 - `tournament_leaderboard` - Tournament rankings
@@ -248,6 +276,7 @@ The JWT token is provided upon login and must be included in the `Authorization`
 ## Testing the Admin Panel
 
 ### 1. Login Test
+
 ```bash
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
@@ -255,18 +284,21 @@ curl -X POST http://localhost:8080/api/auth/login \
 ```
 
 ### 2. Get User List
+
 ```bash
 curl -H "Authorization: Bearer <token>" \
      http://localhost:8080/api/admin/users
 ```
 
 ### 3. Get Dashboard Stats
+
 ```bash
 curl -H "Authorization: Bearer <token>" \
      http://localhost:8080/api/admin/dashboard
 ```
 
 ### 4. Get Financial Summary
+
 ```bash
 curl -H "Authorization: Bearer <token>" \
      http://localhost:8080/api/admin/financial-summary
@@ -279,6 +311,7 @@ curl -H "Authorization: Bearer <token>" \
 The Admin Panel (accessed at `/admin`) includes:
 
 ### Tabs
+
 1. **Player Analytics** - View and manage players
 2. **User Profiles** - Manage user profiles
 3. **AI Employees** - Manage AI customer service agents
@@ -289,12 +322,14 @@ The Admin Panel (accessed at `/admin`) includes:
 8. **Reports** - Generate financial and compliance reports
 
 ### Dashboard Overview
+
 - **Total Players** - Count of registered users
 - **Total Player Losses** - Sum of player losses
 - **System RTP** - Return to player percentage
 - **Jackpot Pool** - Active jackpot amounts
 
 ### Quick Actions
+
 - Refresh Data
 - Export Reports
 - Search and Filter
@@ -316,16 +351,19 @@ The Admin Panel (accessed at `/admin`) includes:
 ## Troubleshooting
 
 ### Admin Panel Not Accessible
+
 - Verify user account has `is_admin = true`
 - Check JWT token is valid
 - Ensure logged in correctly
 
 ### API Returns 403 Forbidden
+
 - Token may be expired, re-login
 - User account may not be admin
 - Check Authorization header format
 
 ### Database Errors
+
 - Ensure all tables are initialized
 - Check database connection
 - Verify environment variables
@@ -335,6 +373,7 @@ The Admin Panel (accessed at `/admin`) includes:
 ## Support
 
 For issues or questions:
+
 1. Check the API endpoint documentation above
 2. Review database schema
 3. Check browser console for errors

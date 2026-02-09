@@ -99,7 +99,9 @@ export function AdminSettings({ token }: AdminSettingsProps) {
         <Card>
           <CardHeader>
             <CardTitle>Game Configuration</CardTitle>
-            <CardDescription>Configure game parameters and limits</CardDescription>
+            <CardDescription>
+              Configure game parameters and limits
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -286,7 +288,9 @@ export function AdminSettings({ token }: AdminSettingsProps) {
         <Card>
           <CardHeader>
             <CardTitle>System Configuration</CardTitle>
-            <CardDescription>Configure overall system parameters</CardDescription>
+            <CardDescription>
+              Configure overall system parameters
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

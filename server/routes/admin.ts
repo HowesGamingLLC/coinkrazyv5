@@ -52,7 +52,8 @@ export const getAllUsers: RequestHandler = async (req: any, res) => {
     const { search, page = 1, limit = 50 } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
-    let query = "SELECT * FROM users ORDER BY created_at DESC LIMIT $1 OFFSET $2";
+    let query =
+      "SELECT * FROM users ORDER BY created_at DESC LIMIT $1 OFFSET $2";
     let params: any[] = [limit, offset];
 
     if (search) {
