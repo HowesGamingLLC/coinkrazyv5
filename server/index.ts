@@ -132,6 +132,11 @@ export function createServer() {
     console.error("Failed to initialize tournaments database:", error);
   });
 
+  // Initialize packages database
+  initPackagesDB().catch((error) => {
+    console.error("Failed to initialize packages database:", error);
+  });
+
   // Middleware
   app.use(cors());
   app.use(express.json());
