@@ -271,7 +271,7 @@ export default function AdminPanel() {
   };
 
   const totalSystemStats = {
-    totalPlayers: players.length,
+    totalPlayers: stats?.summary?.totalUsers || players.length,
     totalLosses: players.reduce((sum, p) => sum + p.totalLosses, 0),
     totalWagered: players.reduce((sum, p) => sum + p.totalWagered, 0),
     averageRTP:
@@ -284,7 +284,7 @@ export default function AdminPanel() {
           100
         : 0,
     highRiskPlayers: players.filter((p) => p.riskLevel === "high").length,
-    unverifiedPlayers: players.filter((p) => !p.verified).length,
+    unverifiedPlayers: stats?.summary?.unverifiedUsers || players.filter((p) => !p.verified).length,
   };
 
   const activeJackpotPool = jackpots.reduce((sum, j) => sum + j.amount, 0);
