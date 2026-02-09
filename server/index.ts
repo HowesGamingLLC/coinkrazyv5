@@ -100,6 +100,11 @@ export function createServer() {
     console.error("Failed to initialize games database:", error);
   });
 
+  // Initialize financial database
+  initFinancialDB().catch((error) => {
+    console.error("Failed to initialize financial database:", error);
+  });
+
   // Middleware
   app.use(cors());
   app.use(express.json());
