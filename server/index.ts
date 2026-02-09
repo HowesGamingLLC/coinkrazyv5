@@ -56,6 +56,21 @@ import {
   getSystemStatus,
   getDashboardData,
 } from "./routes/admin";
+import {
+  getProviders,
+  createProvider,
+  updateProvider,
+  deleteProvider,
+  getGames,
+  createGame,
+  updateGame,
+  deleteGame,
+  getBlacklist,
+  addToBlacklist,
+  removeFromBlacklist,
+  getGameStats,
+  initGamesDB,
+} from "./routes/admin-games";
 import { authMiddleware, requireAdmin } from "./lib/auth-middleware";
 import { initializeDatabase } from "./lib/db";
 
