@@ -84,6 +84,19 @@ import {
   getFinancialSummary,
   initFinancialDB,
 } from "./routes/admin-financial";
+import {
+  getAllTournaments,
+  getTournamentDetails,
+  createTournament,
+  updateTournament,
+  deleteTournament,
+  startTournament,
+  endTournament,
+  cancelTournament,
+  updateLeaderboard,
+  getTournamentStats,
+  initTournamentsDB,
+} from "./routes/admin-tournaments";
 import { authMiddleware, requireAdmin } from "./lib/auth-middleware";
 import { initializeDatabase } from "./lib/db";
 
