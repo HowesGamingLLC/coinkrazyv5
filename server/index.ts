@@ -191,5 +191,20 @@ export function createServer() {
   app.post("/api/admin/blacklist", ...requireAdmin, addToBlacklist);
   app.delete("/api/admin/blacklist/:blacklistId", ...requireAdmin, removeFromBlacklist);
 
+  // Admin API routes - Financial Management
+  app.get("/api/admin/transactions", ...requireAdmin, getTransactions);
+  app.get("/api/admin/transactions/stats", ...requireAdmin, getTransactionStats);
+
+  app.get("/api/admin/withdrawals", ...requireAdmin, getWithdrawals);
+  app.post("/api/admin/withdrawals/:withdrawalId/approve", ...requireAdmin, approveWithdrawal);
+  app.post("/api/admin/withdrawals/:withdrawalId/reject", ...requireAdmin, rejectWithdrawal);
+  app.get("/api/admin/withdrawals/stats", ...requireAdmin, getWithdrawalStats);
+
+  app.get("/api/admin/balances/:userId", ...requireAdmin, getUserBalance);
+  app.post("/api/admin/balances/:userId", ...requireAdmin, updateUserBalance);
+
+  app.get("/api/admin/revenue-report", ...requireAdmin, getRevenueReport);
+  app.get("/api/admin/financial-summary", ...requireAdmin, getFinancialSummary);
+
   return app;
 }
