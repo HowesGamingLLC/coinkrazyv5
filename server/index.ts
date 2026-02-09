@@ -147,7 +147,7 @@ export function createServer() {
   app.get("/api/public/embed/:providerId/:gameId", getPublicGameEmbed);
   app.get("/api/public/rate-limit", getRateLimitStatus);
 
-  // Admin API routes
+  // Admin API routes - User Management
   app.get("/api/admin/stats", ...requireAdmin, getAdminStats);
   app.get("/api/admin/users", ...requireAdmin, getAllUsers);
   app.get("/api/admin/users/:userId", ...requireAdmin, getUserById);
@@ -156,6 +156,22 @@ export function createServer() {
   app.get("/api/admin/users/:userId/stats", ...requireAdmin, getUserStats);
   app.get("/api/admin/system", ...requireAdmin, getSystemStatus);
   app.get("/api/admin/dashboard", ...requireAdmin, getDashboardData);
+
+  // Admin API routes - Game Management
+  app.get("/api/admin/providers", ...requireAdmin, getProviders);
+  app.post("/api/admin/providers", ...requireAdmin, createProvider);
+  app.post("/api/admin/providers/:providerId", ...requireAdmin, updateProvider);
+  app.delete("/api/admin/providers/:providerId", ...requireAdmin, deleteProvider);
+
+  app.get("/api/admin/games", ...requireAdmin, getGames);
+  app.post("/api/admin/games", ...requireAdmin, createGame);
+  app.post("/api/admin/games/:gameId", ...requireAdmin, updateGame);
+  app.delete("/api/admin/games/:gameId", ...requireAdmin, deleteGame);
+
+  app.get("/api/admin/games-stats", ...requireAdmin, getGameStats);
+  app.get("/api/admin/blacklist", ...requireAdmin, getBlacklist);
+  app.post("/api/admin/blacklist", ...requireAdmin, addToBlacklist);
+  app.delete("/api/admin/blacklist/:blacklistId", ...requireAdmin, removeFromBlacklist);
 
   return app;
 }
