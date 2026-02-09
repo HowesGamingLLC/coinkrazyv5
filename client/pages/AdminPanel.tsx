@@ -27,6 +27,7 @@ import { AdminUserManagement } from "@/components/admin/AdminUserManagement";
 import { AdminFinancial } from "@/components/admin/AdminFinancial";
 import { AdminTournaments } from "@/components/admin/AdminTournaments";
 import { AdminGames } from "@/components/admin/AdminGames";
+import { AdminSettings } from "@/components/admin/AdminSettings";
 
 interface AdminStats {
   totalUsers: number;
