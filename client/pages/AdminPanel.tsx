@@ -352,6 +352,11 @@ export default function AdminPanel() {
           <TabsContent value="games" className="space-y-6">
             <AdminGames token={token} />
           </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings" className="space-y-6">
+            <AdminSettings token={token} />
+          </TabsContent>
         </Tabs>
       </div>
     </div>
