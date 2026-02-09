@@ -97,6 +97,15 @@ import {
   getTournamentStats,
   initTournamentsDB,
 } from "./routes/admin-tournaments";
+import {
+  getPackages,
+  getPackagesAdmin,
+  createPackage,
+  updatePackage,
+  deletePackage,
+  getPackageSalesStats,
+  initPackagesDB,
+} from "./routes/admin-packages";
 import { authMiddleware, requireAdmin } from "./lib/auth-middleware";
 import { initializeDatabase } from "./lib/db";
 
