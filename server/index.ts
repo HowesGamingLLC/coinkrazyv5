@@ -40,84 +40,24 @@ import {
   getRateLimitStatus,
 } from "./routes/publicApi";
 import {
-  register,
-  login,
-  getSession,
-  logout,
-  updateProfile,
-} from "./routes/auth";
-import {
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-  getAdminStats,
-  getUserStats,
-  getSystemStatus,
-  getDashboardData,
-} from "./routes/admin";
-import {
-  getProviders as getAdminProviders,
-  createProvider,
-  updateProvider,
-  deleteProvider,
-  getGames as getAdminGames,
-  createGame,
-  updateGame,
-  deleteGame,
-  getBlacklist,
-  addToBlacklist,
-  removeFromBlacklist,
-  getGameStats,
-  initGamesDB,
-} from "./routes/admin-games";
-import {
-  getTransactions,
-  getTransactionStats,
-  getWithdrawals,
-  approveWithdrawal,
-  rejectWithdrawal,
-  getWithdrawalStats,
+  getUserTransactions,
   getUserBalance,
-  updateUserBalance,
-  getRevenueReport,
-  getFinancialSummary,
-  initFinancialDB,
-} from "./routes/admin-financial";
+  recordTransaction,
+} from "./routes/transactions";
 import {
-  getAllTournaments,
-  getTournamentDetails,
-  createTournament,
-  updateTournament,
-  deleteTournament,
-  startTournament,
-  endTournament,
-  cancelTournament,
-  updateLeaderboard,
-  getTournamentStats,
-  initTournamentsDB,
-} from "./routes/admin-tournaments";
+  getAllGames,
+  getGame,
+  createGameSession,
+  endGameSession,
+  validateGameSession,
+} from "./routes/games";
 import {
-  getPackages,
-  getPackagesAdmin,
-  createPackage,
-  updatePackage,
-  deletePackage,
-  getPackageSalesStats,
-  initPackagesDB,
-} from "./routes/admin-packages";
-import {
-  getSlots,
-  getSlotById,
-  getSlotsAdmin,
-  createSlot,
-  updateSlot,
-  deleteSlot,
-  getSlotStats,
-  initializeSlotsTable,
-} from "./routes/admin-slots";
-import { authMiddleware, requireAdmin } from "./lib/auth-middleware";
-import { initializeDatabase } from "./lib/db";
+  loginHandler,
+  registerHandler,
+  logoutHandler,
+  refreshHandler,
+} from "./routes/auth";
+import { healthHandler } from "./routes/health";
 
 export function createServer() {
   const app = express();
@@ -170,7 +110,15 @@ export function createServer() {
     res.json({ message: ping });
   });
 
+  app.get("/api/health", healthHandler);
+
   app.get("/api/demo", handleDemo);
+
+  // Auth routes (proxy to Supabase)
+  app.post("/api/auth/login", loginHandler);
+  app.post("/api/auth/register", registerHandler);
+  app.post("/api/auth/logout", logoutHandler);
+  app.post("/api/auth/refresh", refreshHandler);
 
   // Tournament routes
   app.get("/api/tournaments", getTournaments);
@@ -212,125 +160,17 @@ export function createServer() {
   app.get("/api/public/embed/:providerId/:gameId", getPublicGameEmbed);
   app.get("/api/public/rate-limit", getRateLimitStatus);
 
-  // Admin API routes - User Management
-  app.get("/api/admin/stats", ...requireAdmin, getAdminStats);
-  app.get("/api/admin/users", ...requireAdmin, getAllUsers);
-  app.get("/api/admin/users/:userId", ...requireAdmin, getUserById);
-  app.post("/api/admin/users/:userId", ...requireAdmin, updateUser);
-  app.delete("/api/admin/users/:userId", ...requireAdmin, deleteUser);
-  app.get("/api/admin/users/:userId/stats", ...requireAdmin, getUserStats);
-  app.get("/api/admin/system", ...requireAdmin, getSystemStatus);
-  app.get("/api/admin/dashboard", ...requireAdmin, getDashboardData);
+  // Transaction routes
+  app.get("/api/transactions", getUserTransactions);
+  app.get("/api/balance", getUserBalance);
+  app.post("/api/transactions", recordTransaction);
 
-  // Admin API routes - Game Management
-  app.get("/api/admin/providers", ...requireAdmin, getAdminProviders);
-  app.post("/api/admin/providers", ...requireAdmin, createProvider);
-  app.post("/api/admin/providers/:providerId", ...requireAdmin, updateProvider);
-  app.delete(
-    "/api/admin/providers/:providerId",
-    ...requireAdmin,
-    deleteProvider,
-  );
-
-  app.get("/api/admin/games", ...requireAdmin, getAdminGames);
-  app.post("/api/admin/games", ...requireAdmin, createGame);
-  app.post("/api/admin/games/:gameId", ...requireAdmin, updateGame);
-  app.delete("/api/admin/games/:gameId", ...requireAdmin, deleteGame);
-
-  app.get("/api/admin/games-stats", ...requireAdmin, getGameStats);
-  app.get("/api/admin/blacklist", ...requireAdmin, getBlacklist);
-  app.post("/api/admin/blacklist", ...requireAdmin, addToBlacklist);
-  app.delete(
-    "/api/admin/blacklist/:blacklistId",
-    ...requireAdmin,
-    removeFromBlacklist,
-  );
-
-  // Admin API routes - Financial Management
-  app.get("/api/admin/transactions", ...requireAdmin, getTransactions);
-  app.get(
-    "/api/admin/transactions/stats",
-    ...requireAdmin,
-    getTransactionStats,
-  );
-
-  app.get("/api/admin/withdrawals", ...requireAdmin, getWithdrawals);
-  app.post(
-    "/api/admin/withdrawals/:withdrawalId/approve",
-    ...requireAdmin,
-    approveWithdrawal,
-  );
-  app.post(
-    "/api/admin/withdrawals/:withdrawalId/reject",
-    ...requireAdmin,
-    rejectWithdrawal,
-  );
-  app.get("/api/admin/withdrawals/stats", ...requireAdmin, getWithdrawalStats);
-
-  app.get("/api/admin/balances/:userId", ...requireAdmin, getUserBalance);
-  app.post("/api/admin/balances/:userId", ...requireAdmin, updateUserBalance);
-
-  app.get("/api/admin/revenue-report", ...requireAdmin, getRevenueReport);
-  app.get("/api/admin/financial-summary", ...requireAdmin, getFinancialSummary);
-
-  // Admin API routes - Tournament Management
-  app.get("/api/admin/tournaments", ...requireAdmin, getAllTournaments);
-  app.get(
-    "/api/admin/tournaments/:tournamentId",
-    ...requireAdmin,
-    getTournamentDetails,
-  );
-  app.post("/api/admin/tournaments", ...requireAdmin, createTournament);
-  app.post(
-    "/api/admin/tournaments/:tournamentId",
-    ...requireAdmin,
-    updateTournament,
-  );
-  app.delete(
-    "/api/admin/tournaments/:tournamentId",
-    ...requireAdmin,
-    deleteTournament,
-  );
-
-  app.post(
-    "/api/admin/tournaments/:tournamentId/start",
-    ...requireAdmin,
-    startTournament,
-  );
-  app.post(
-    "/api/admin/tournaments/:tournamentId/end",
-    ...requireAdmin,
-    endTournament,
-  );
-  app.post(
-    "/api/admin/tournaments/:tournamentId/cancel",
-    ...requireAdmin,
-    cancelTournament,
-  );
-
-  app.post(
-    "/api/admin/tournaments/:tournamentId/leaderboard",
-    ...requireAdmin,
-    updateLeaderboard,
-  );
-  app.get("/api/admin/tournaments/stats", ...requireAdmin, getTournamentStats);
-
-  // Admin API routes - Package Management
-  app.get("/api/packages", getPackages);
-  app.get("/api/admin/packages", ...requireAdmin, getPackagesAdmin);
-  app.post("/api/admin/packages", ...requireAdmin, createPackage);
-  app.post("/api/admin/packages/:packageId", ...requireAdmin, updatePackage);
-  app.delete("/api/admin/packages/:packageId", ...requireAdmin, deletePackage);
-  app.get("/api/admin/packages/stats", ...requireAdmin, getPackageSalesStats);
-
-  // Admin API routes - Slots Management
-  app.get("/api/slots", getSlots);
-  app.get("/api/slots/:id", getSlotById);
-  app.get("/api/admin/slots", ...requireAdmin, getSlotsAdmin);
-  app.post("/api/admin/slots", ...requireAdmin, createSlot);
-  app.post("/api/admin/slots/:id", ...requireAdmin, updateSlot);
-  app.delete("/api/admin/slots/:id", ...requireAdmin, deleteSlot);
-  app.get("/api/admin/slots/stats", ...requireAdmin, getSlotStats);
+  // Game routes (real database-backed)
+  app.get("/api/games", getAllGames);
+  app.get("/api/games/:id", getGame);
+  app.post("/api/game-sessions", createGameSession);
+  app.post("/api/game-sessions/end", endGameSession);
+  app.post("/api/game-sessions/validate", validateGameSession);
 
   return app;
 }

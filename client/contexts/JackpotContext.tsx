@@ -5,8 +5,8 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCurrency, CurrencyType } from "@/contexts/CurrencyContext";
+import { useAuthSafe } from "@/contexts/AuthContext";
+import { useCurrencySafe, CurrencyType } from "@/contexts/CurrencyContext";
 
 export interface JackpotData {
   id: string;
@@ -94,8 +94,14 @@ const initialJackpots: JackpotData[] = [
 ];
 
 export function JackpotProvider({ children }: { children: ReactNode }) {
-  const { user, updateJackpotOptIn } = useAuth();
-  const { updateBalance } = useCurrency();
+  const authContext = useAuthSafe();
+  const currencyContext = useCurrencySafe();
+
+  // Use safe values when context isn't available
+  const user = authContext?.user || null;
+  const updateJackpotOptIn = authContext?.updateJackpotOptIn || (() => {});
+  const updateBalance = currencyContext?.updateBalance || (() => {});
+
   const [jackpots, setJackpots] = useState<JackpotData[]>(initialJackpots);
   const [totalContributed, setTotalContributed] = useState(0);
   const [recentWins, setRecentWins] = useState<JackpotWin[]>([
