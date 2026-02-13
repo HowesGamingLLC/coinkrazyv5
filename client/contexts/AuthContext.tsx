@@ -82,6 +82,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const init = async () => {
+      if (!supabase) {
+        console.warn("Supabase not initialized - auth features disabled");
+        setIsLoading(false);
+        return;
+      }
+
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -92,6 +98,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setIsLoading(false);
     };
+
+    if (!supabase) {
+      setIsLoading(false);
+      return;
+    }
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
@@ -141,19 +152,134 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setIsLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: credentials.email,
-      password: credentials.password,
-    });
+    try {
+      console.log("[Login] Attempting login for:", credentials.email);
 
-    if (error || !data.session?.user) {
+      // Call the backend proxy endpoint instead of Supabase directly
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      });
+
+      console.log("[Login] Response status:", response.status);
+      console.log(
+        "[Login] Response headers:",
+        response.headers.get("content-type"),
+      );
+
+      if (!response.ok) {
+        let errorData;
+        const contentType = response.headers.get("content-type");
+        if (contentType?.includes("application/json")) {
+          try {
+            errorData = await response.json();
+            console.error("[Login] Error response status:", response.status);
+            console.error(
+              "[Login] Error response data:",
+              JSON.stringify(errorData, null, 2),
+            );
+            console.error("[Login] Error message:", errorData?.error);
+          } catch {
+            console.error("[Login] Failed to parse error response JSON");
+            errorData = { error: `HTTP ${response.status} error` };
+          }
+        } else {
+          const text = await response.text();
+          console.error("[Login] Non-JSON error response:", text);
+          console.error("[Login] Response status:", response.status);
+          errorData = { error: `HTTP ${response.status} error: ${text}` };
+        }
+        setIsLoading(false);
+        return false;
+      }
+
+      let responseData;
+      const contentType = response.headers.get("content-type");
+      if (!contentType?.includes("application/json")) {
+        console.error("[Login] Response is not JSON:", contentType);
+        const text = await response.text();
+        console.error("[Login] Response text:", text);
+        setIsLoading(false);
+        return false;
+      }
+
+      try {
+        responseData = await response.json();
+      } catch (parseError) {
+        console.error("[Login] Failed to parse response JSON:", parseError);
+        setIsLoading(false);
+        return false;
+      }
+
+      const { session, user } = responseData;
+
+      if (!session || !user) {
+        console.warn("[Login] Missing session or user in response:", {
+          hasSession: !!session,
+          hasUser: !!user,
+        });
+        setIsLoading(false);
+        return false;
+      }
+
+      console.log("[Login] Received session and user data");
+
+      // Store session in localStorage for persistence
+      localStorage.setItem(
+        "coinkrazy_auth_session",
+        JSON.stringify({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          expires_at: session.expires_at,
+        }),
+      );
+
+      // Load and set the full user profile from the database
+      if (supabase) {
+        console.log("[Login] Loading full user profile from Supabase");
+        await loadAndSetProfile(user.id);
+      } else {
+        console.warn(
+          "[Login] Supabase not available, using minimal user object",
+        );
+        // Fallback: set a minimal user object
+        const minimalUser: User = {
+          id: user.id,
+          email: user.email,
+          name: "",
+          isAdmin: false,
+          verified: false,
+          kycStatus: "not_submitted",
+          createdAt: new Date(user.created_at),
+          lastLoginAt: new Date(),
+          totalLosses: 0,
+          jackpotOptIn: false,
+        };
+        setUser(minimalUser);
+        localStorage.setItem(
+          "coinkrazy_auth_user",
+          JSON.stringify(minimalUser),
+        );
+      }
+
+      console.log("[Login] Login successful");
+      setIsLoading(false);
+      return true;
+    } catch (error: unknown) {
+      console.error("[Login] Exception:", error);
+      if (error instanceof Error) {
+        console.error("[Login] Error message:", error.message);
+        console.error("[Login] Error stack:", error.stack);
+      }
       setIsLoading(false);
       return false;
     }
-
-    await loadAndSetProfile(data.session.user.id);
-    setIsLoading(false);
-    return true;
   };
 
   const register = async (data: RegisterData): Promise<boolean> => {
@@ -166,52 +292,72 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return false;
     }
 
-    const { data: signUpRes, error } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-      options: {
-        data: { name: data.name },
-      },
-    });
+    try {
+      console.log("Attempting registration via proxy for:", data.email);
 
-    if (error || !signUpRes.user) {
+      // Call the backend proxy endpoint
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          name: data.name,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Registration error:", errorData.error);
+        setIsLoading(false);
+        return false;
+      }
+
+      const { user } = await response.json();
+
+      if (!user) {
+        console.warn("No user returned from registration");
+        setIsLoading(false);
+        return false;
+      }
+
+      // Create user profile in the database if Supabase is available
+      if (supabase) {
+        const profilePayload = {
+          id: user.id,
+          email: data.email,
+          name: data.name,
+          is_admin: false,
+          verified: false,
+          kyc_status: "not_submitted",
+          kyc_documents: null,
+          created_at: new Date().toISOString(),
+          last_login_at: new Date().toISOString(),
+          total_losses: 0,
+          jackpot_opt_in: false,
+        };
+
+        const { error: profileErr } = await supabase
+          .from(PROFILES_TABLE)
+          .insert(profilePayload);
+
+        if (profileErr) {
+          console.error("Error creating profile:", profileErr);
+        }
+      }
+
+      setIsLoading(false);
+      return true;
+    } catch (error: unknown) {
+      console.error("Registration exception:", error);
+      if (error instanceof Error) {
+        console.error("Error message:", error.message);
+      }
       setIsLoading(false);
       return false;
     }
-
-    const profilePayload = {
-      id: signUpRes.user.id,
-      email: data.email,
-      name: data.name,
-      is_admin: false,
-      verified: false,
-      kyc_status: "not_submitted",
-      kyc_documents: null,
-      created_at: new Date().toISOString(),
-      last_login_at: new Date().toISOString(),
-      total_losses: 0,
-      jackpot_opt_in: false,
-    };
-
-    const { error: profileErr } = await supabase
-      .from(PROFILES_TABLE)
-      .insert(profilePayload);
-
-    if (profileErr) {
-      console.error("Error creating profile:", profileErr);
-    }
-
-    // If email confirmation is enabled, user may need to verify before session exists
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (session?.user) {
-      await loadAndSetProfile(session.user.id);
-    }
-
-    setIsLoading(false);
-    return true;
   };
 
   const logout = async () => {
@@ -220,6 +366,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setUser(null);
     localStorage.removeItem("coinkrazy_auth_user");
+    localStorage.removeItem("coinkrazy_auth_session");
     localStorage.removeItem("coinkrazy_user");
     localStorage.removeItem("coinkrazy_transactions");
   };
@@ -293,6 +440,12 @@ export const useAuth = () => {
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
+  return context;
+};
+
+// Safe version of useAuth that returns null if not available instead of throwing
+export const useAuthSafe = () => {
+  const context = useContext(AuthContext);
   return context;
 };
 

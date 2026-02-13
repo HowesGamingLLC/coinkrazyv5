@@ -20,6 +20,7 @@ interface WheelSegment {
 interface DailySpinWheelProps {
   size?: number;
   onSpin?: (result: WheelSegment) => void;
+  disabled?: boolean;
 }
 
 // Updated segments for SC rewards with better RTP
@@ -68,7 +69,11 @@ const dailySpinSegments: WheelSegment[] = [
   },
 ];
 
-export function DailySpinWheel({ size = 300, onSpin }: DailySpinWheelProps) {
+export function DailySpinWheel({
+  size = 300,
+  onSpin,
+  disabled = false,
+}: DailySpinWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [lastResult, setLastResult] = useState<WheelSegment | null>(null);
@@ -257,7 +262,7 @@ export function DailySpinWheel({ size = 300, onSpin }: DailySpinWheelProps) {
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
               <Button
                 onClick={handleSpin}
-                disabled={isSpinning || !canSpin}
+                disabled={isSpinning || !canSpin || disabled}
                 className="w-16 h-16 rounded-full bg-gradient-to-br from-teal to-teal-dark hover:scale-110 transition-transform duration-200 font-bold text-white shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSpinning ? (
