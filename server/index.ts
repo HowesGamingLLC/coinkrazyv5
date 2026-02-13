@@ -13,8 +13,8 @@ import {
   cancelTournament,
 } from "./routes/tournaments";
 import {
-  getProviders,
-  getGames,
+  getProviders as getSlotProviders,
+  getGames as getSlotGames,
   getGameById,
   launchGame,
   validateSession,
@@ -57,11 +57,11 @@ import {
   getDashboardData,
 } from "./routes/admin";
 import {
-  getProviders,
+  getProviders as getAdminProviders,
   createProvider,
   updateProvider,
   deleteProvider,
-  getGames,
+  getGames as getAdminGames,
   createGame,
   updateGame,
   deleteGame,
@@ -183,8 +183,8 @@ export function createServer() {
   app.post("/api/tournaments/:id/cancel", cancelTournament);
 
   // Slot provider routes
-  app.get("/api/slots/providers", getProviders);
-  app.get("/api/slots/games", getGames);
+  app.get("/api/slots/providers", getSlotProviders);
+  app.get("/api/slots/games", getSlotGames);
   app.get("/api/slots/providers/:providerId/games/:gameId", getGameById);
   app.post("/api/slots/launch", launchGame);
   app.post("/api/slots/validate-session", validateSession);
@@ -223,7 +223,7 @@ export function createServer() {
   app.get("/api/admin/dashboard", ...requireAdmin, getDashboardData);
 
   // Admin API routes - Game Management
-  app.get("/api/admin/providers", ...requireAdmin, getProviders);
+  app.get("/api/admin/providers", ...requireAdmin, getAdminProviders);
   app.post("/api/admin/providers", ...requireAdmin, createProvider);
   app.post("/api/admin/providers/:providerId", ...requireAdmin, updateProvider);
   app.delete(
@@ -232,7 +232,7 @@ export function createServer() {
     deleteProvider,
   );
 
-  app.get("/api/admin/games", ...requireAdmin, getGames);
+  app.get("/api/admin/games", ...requireAdmin, getAdminGames);
   app.post("/api/admin/games", ...requireAdmin, createGame);
   app.post("/api/admin/games/:gameId", ...requireAdmin, updateGame);
   app.delete("/api/admin/games/:gameId", ...requireAdmin, deleteGame);
