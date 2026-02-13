@@ -28,6 +28,7 @@ import { AdminFinancial } from "@/components/admin/AdminFinancial";
 import { AdminTournaments } from "@/components/admin/AdminTournaments";
 import { AdminGames } from "@/components/admin/AdminGames";
 import { AdminSettings } from "@/components/admin/AdminSettings";
+import { AdminSlots } from "@/components/admin/AdminSlots";
 
 interface AdminStats {
   totalUsers: number;
@@ -215,7 +216,7 @@ export default function AdminPanel() {
           onValueChange={setActiveTab}
           className="space-y-6"
         >
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="users">
               <Users className="h-4 w-4 mr-2" />
@@ -232,6 +233,10 @@ export default function AdminPanel() {
             <TabsTrigger value="games">
               <Gamepad2 className="h-4 w-4 mr-2" />
               Games
+            </TabsTrigger>
+            <TabsTrigger value="slots">
+              <Gamepad2 className="h-4 w-4 mr-2" />
+              Slots
             </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
@@ -359,6 +364,11 @@ export default function AdminPanel() {
           {/* Games Tab */}
           <TabsContent value="games" className="space-y-6">
             <AdminGames token={token} />
+          </TabsContent>
+
+          {/* Slots Tab */}
+          <TabsContent value="slots" className="space-y-6">
+            <AdminSlots token={token} />
           </TabsContent>
 
           {/* Settings Tab */}

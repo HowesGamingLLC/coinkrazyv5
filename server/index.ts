@@ -106,6 +106,16 @@ import {
   getPackageSalesStats,
   initPackagesDB,
 } from "./routes/admin-packages";
+import {
+  getSlots,
+  getSlotById,
+  getSlotsAdmin,
+  createSlot,
+  updateSlot,
+  deleteSlot,
+  getSlotStats,
+  initializeSlotsTable,
+} from "./routes/admin-slots";
 import { authMiddleware, requireAdmin } from "./lib/auth-middleware";
 import { initializeDatabase } from "./lib/db";
 
@@ -135,6 +145,11 @@ export function createServer() {
   // Initialize packages database
   initPackagesDB().catch((error) => {
     console.error("Failed to initialize packages database:", error);
+  });
+
+  // Initialize slots database
+  initializeSlotsTable().catch((error) => {
+    console.error("Failed to initialize slots database:", error);
   });
 
   // Middleware
@@ -299,6 +314,23 @@ export function createServer() {
     updateLeaderboard,
   );
   app.get("/api/admin/tournaments/stats", ...requireAdmin, getTournamentStats);
+
+  // Admin API routes - Package Management
+  app.get("/api/packages", getPackages);
+  app.get("/api/admin/packages", ...requireAdmin, getPackagesAdmin);
+  app.post("/api/admin/packages", ...requireAdmin, createPackage);
+  app.post("/api/admin/packages/:packageId", ...requireAdmin, updatePackage);
+  app.delete("/api/admin/packages/:packageId", ...requireAdmin, deletePackage);
+  app.get("/api/admin/packages/stats", ...requireAdmin, getPackageSalesStats);
+
+  // Admin API routes - Slots Management
+  app.get("/api/slots", getSlots);
+  app.get("/api/slots/:id", getSlotById);
+  app.get("/api/admin/slots", ...requireAdmin, getSlotsAdmin);
+  app.post("/api/admin/slots", ...requireAdmin, createSlot);
+  app.post("/api/admin/slots/:id", ...requireAdmin, updateSlot);
+  app.delete("/api/admin/slots/:id", ...requireAdmin, deleteSlot);
+  app.get("/api/admin/slots/stats", ...requireAdmin, getSlotStats);
 
   return app;
 }
