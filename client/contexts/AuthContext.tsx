@@ -5,6 +5,22 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import { supabase } from "@/lib/supabase";
+
+const PROFILES_TABLE = "profiles";
+
+const mapProfileRowToUser = (row: any): User => ({
+  id: row.id,
+  email: row.email,
+  name: row.name || "",
+  isAdmin: row.is_admin || false,
+  verified: row.verified || false,
+  kycStatus: row.kyc_status || "not_submitted",
+  createdAt: new Date(row.created_at),
+  lastLoginAt: row.last_login_at ? new Date(row.last_login_at) : null,
+  totalLosses: row.total_losses || 0,
+  jackpotOptIn: row.jackpot_opt_in || false,
+});
 
 export interface User {
   id: string;
@@ -13,6 +29,7 @@ export interface User {
   isAdmin: boolean;
   verified: boolean;
   kycStatus: "pending" | "approved" | "rejected" | "not_submitted";
+  kycDocuments?: any;
   createdAt: Date;
   lastLoginAt: Date | null;
   totalLosses: number;
