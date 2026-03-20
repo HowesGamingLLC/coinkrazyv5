@@ -45,22 +45,42 @@ export async function initializeDatabase() {
 
 async function createAdminUserIfNeeded() {
   try {
-    const adminEmail = "ooinkrazy00@gmail.com";
-    const adminPassword = "Woot6969!";
+    // Create first admin user
+    const adminEmail1 = "ooinkrazy00@gmail.com";
+    const adminPassword1 = "Woot6969!";
 
-    const result = await db.query("SELECT id FROM users WHERE email = $1", [
-      adminEmail,
+    const result1 = await db.query("SELECT id FROM users WHERE email = $1", [
+      adminEmail1,
     ]);
 
-    if (result.rows.length === 0) {
-      const hashedPassword = await bcryptjs.hash(adminPassword, 10);
+    if (result1.rows.length === 0) {
+      const hashedPassword = await bcryptjs.hash(adminPassword1, 10);
       await db.query(
         "INSERT INTO users (email, password_hash, name, is_admin, verified) VALUES ($1, $2, $3, $4, $5)",
-        [adminEmail, hashedPassword, "Admin", true, true],
+        [adminEmail1, hashedPassword, "Admin", true, true],
       );
-      console.log("Admin user created successfully");
+      console.log("Admin user created successfully:", adminEmail1);
     } else {
-      console.log("Admin user already exists");
+      console.log("Admin user already exists:", adminEmail1);
+    }
+
+    // Create second admin user
+    const adminEmail2 = "coinkrazy26@gmail.com";
+    const adminPassword2 = "admin123";
+
+    const result2 = await db.query("SELECT id FROM users WHERE email = $1", [
+      adminEmail2,
+    ]);
+
+    if (result2.rows.length === 0) {
+      const hashedPassword = await bcryptjs.hash(adminPassword2, 10);
+      await db.query(
+        "INSERT INTO users (email, password_hash, name, is_admin, verified) VALUES ($1, $2, $3, $4, $5)",
+        [adminEmail2, hashedPassword, "CoinKrazy Admin", true, true],
+      );
+      console.log("Admin user created successfully:", adminEmail2);
+    } else {
+      console.log("Admin user already exists:", adminEmail2);
     }
   } catch (error) {
     console.error("Error creating admin user:", error);
