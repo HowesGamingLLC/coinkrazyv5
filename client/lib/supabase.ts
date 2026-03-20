@@ -2,6 +2,8 @@
 // Authentication has been migrated to Express backend with JWT tokens.
 // Use the AuthContext from "@/contexts/AuthContext" instead.
 
+import { createClient } from "@supabase/supabase-js";
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
